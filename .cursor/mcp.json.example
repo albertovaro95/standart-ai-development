@@ -21,6 +21,12 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "tu-github-token-aqui"
       }
+    },
+    "figma-desktop": {
+      "url": "http://127.0.0.1:3845/mcp"
+    },
+    "figma-remote": {
+      "url": "https://mcp.figma.com/mcp"
     }
   }
 }
