@@ -1,0 +1,53 @@
+# User Stories - Ejemplo
+
+Este es un archivo de ejemplo que muestra cómo se pueden estructurar las user stories en Markdown para que Cursor las pueda leer y sincronizar con Jira.
+
+## PROJ-123: Como usuario, quiero iniciar sesión
+
+**Descripción:**
+Como usuario del sistema, quiero poder iniciar sesión con mis credenciales para acceder a mi cuenta.
+
+**Criterios de Aceptación:**
+- El usuario puede ingresar su email y contraseña
+- El sistema valida las credenciales
+- Si las credenciales son correctas, el usuario es redirigido al dashboard
+- Si las credenciales son incorrectas, se muestra un mensaje de error
+
+**Story Points:** 5
+**Prioridad:** Alta
+**Estado:** To Do
+
+---
+
+## PROJ-124: Como usuario, quiero recuperar mi contraseña
+
+**Descripción:**
+Como usuario, quiero poder recuperar mi contraseña si la olvidé para poder acceder a mi cuenta nuevamente.
+
+**Criterios de Aceptación:**
+- El usuario puede solicitar recuperación de contraseña desde la pantalla de login
+- El sistema envía un email con un enlace de recuperación
+- El enlace expira después de 24 horas
+- El usuario puede establecer una nueva contraseña
+
+**Story Points:** 3
+**Prioridad:** Media
+**Estado:** In Progress
+
+---
+
+## PROJ-125: Como administrador, quiero ver un dashboard de métricas
+
+**Descripción:**
+Como administrador, quiero ver un dashboard con métricas clave del sistema para monitorear el rendimiento.
+
+**Criterios de Aceptación:**
+- El dashboard muestra métricas en tiempo real
+- Las métricas incluyen: usuarios activos, transacciones, errores
+- Los datos se actualizan automáticamente cada 5 minutos
+- El dashboard es responsive y funciona en móviles
+
+**Story Points:** 8
+**Prioridad:** Alta
+**Estado:** Done
+
