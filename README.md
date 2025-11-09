@@ -4,7 +4,23 @@ Proyecto full-stack desarrollado con Python (FastAPI) para el backend y React (V
 
 ## 🚀 Inicio Rápido
 
-### Backend
+### Opción 1: Usando Makefile (Recomendado)
+
+```bash
+# Instalar todas las dependencias
+make install
+
+# Levantar backend y frontend en paralelo
+make dev
+
+# O levantar por separado:
+make backend    # Solo backend
+make frontend   # Solo frontend
+```
+
+### Opción 2: Manual
+
+#### Backend
 
 ```bash
 cd backend
@@ -17,7 +33,7 @@ python main.py
 El backend estará disponible en http://localhost:8000
 - Documentación API: http://localhost:8000/docs
 
-### Frontend
+#### Frontend
 
 ```bash
 cd frontend
@@ -26,6 +42,22 @@ npm run dev
 ```
 
 El frontend estará disponible en http://localhost:5173
+
+### Comandos Makefile disponibles
+
+```bash
+make help              # Ver todos los comandos disponibles
+make install           # Instalar todas las dependencias
+make install-backend   # Instalar solo dependencias del backend
+make install-frontend  # Instalar solo dependencias del frontend
+make backend           # Levantar solo el backend
+make frontend          # Levantar solo el frontend
+make dev               # Levantar backend y frontend en paralelo
+make status            # Verificar estado de los servidores
+make clean             # Limpiar archivos generados
+make clean-db          # Limpiar solo la base de datos
+make build-frontend    # Compilar frontend para producción
+```
 
 ## 📁 Estructura del Proyecto
 
