@@ -63,15 +63,32 @@ make build-frontend    # Compilar frontend para producción
 
 ```
 standart-ai-development/
-├── backend/          # API FastAPI
+├── backend/              # API FastAPI
+│   ├── domain/           # Lógica de negocio (arquitectura hexagonal)
+│   ├── application/      # Casos de uso y servicios
+│   ├── infrastructure/   # Adaptadores y repositorios
 │   ├── main.py
 │   ├── requirements.txt
 │   └── README.md
-├── frontend/         # Aplicación React con Vite
+├── frontend/             # Aplicación React con Vite
 │   ├── src/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   └── schemas/
 │   ├── package.json
 │   └── vite.config.js
-├── .cursor/          # Configuración MCP
+├── .cursor/              # Configuración Cursor (MCP, Commands, Agentes)
+│   ├── agents/           # Agentes especializados de IA
+│   ├── commands/         # Commands para automatizar procesos
+│   ├── doc/              # Documentación generada por user story
+│   │   └── SCRUM-X/      # Documentación por ticket de Jira
+│   ├── hooks/            # Scripts de automatización
+│   ├── sessions/         # Contexto de conversaciones
+│   ├── mcp.json          # Configuración MCP (credenciales)
+│   └── settings.json     # Configuración de Cursor
+├── .trees/               # Git worktrees para features
+├── user_stories.md        # User stories sincronizadas desde Jira
 └── README.md
 ```
 
@@ -193,17 +210,167 @@ Una vez configurado, puedes pedirle a Cursor que:
 
 Cursor podrá interactuar directamente con Jira, GitHub y Figma a través del protocolo MCP.
 
+---
+
+## 🤖 Sistema de Agentes y Commands de Cursor
+
+Este proyecto incluye un sistema completo de **agents** (agentes especializados) y **commands** (comandos automatizados) que permiten trabajar de forma estructurada con user stories de Jira, implementar features siguiendo metodologías específicas, y automatizar todo el flujo desde la lectura de la user story hasta la creación del Pull Request.
+
+### 🎯 Commands Disponibles
+
+Los commands son procesos automatizados que puedes ejecutar desde el chat de Cursor usando el formato `/command-name argument`:
+
+#### `/start-working-on-jira-issue SCRUM-X`
+**El command principal** - Automatiza todo el proceso desde leer una user story de Jira hasta crear el Pull Request:
+
+1. Lee la user story de Jira
+2. Crea estructura de documentación en `.cursor/doc/SCRUM-X/`
+3. Crea/actualiza `user_stories.md`
+4. Crea worktree para la feature
+5. Planifica la implementación (explora, selecciona agentes, crea plan)
+6. Implementa con TDD (Test-Driven Development)
+7. Valida tests y builds
+8. Crea resumen de implementación
+9. Hace commit y push
+10. Crea Pull Request en GitHub
+11. Actualiza estado en Jira
+12. Actualiza `user_stories.md` con documentación
+
+**Ejemplo de uso:**
+```
+/start-working-on-jira-issue SCRUM-3
+```
+
+#### `/explore-plan "descripción de feature"`
+Crea un plan detallado de implementación siguiendo el flujo: Explore → Team Selection → Plan → Advice → Update → Clarification → Iterate.
+
+#### `/worktree-tdd issue-number`
+Crea un worktree y trabaja en modo TDD (Test-Driven Development), implementando funcionalidad por funcionalidad.
+
+#### `/worktree issue-number`
+Crea un worktree para trabajar en una issue de GitHub.
+
+#### `/create-new-gh-issue "descripción"`
+Crea un nuevo issue en GitHub con estructura completa (problema, valor de usuario, criterios de aceptación, etc.).
+
+#### `/implement-feedback issue-number`
+Implementa feedback recibido en un PR o issue.
+
+#### `/update-feedback issue-number`
+Obtiene feedback de QA usando el agente `qa-criteria-validator` y actualiza el PR.
+
+#### `/analyze_bug sentry-issue`
+Analiza un bug de Sentry sin implementar cambios, solo investiga.
+
+#### `/rule2hook`
+Convierte reglas del proyecto en hooks de Cursor para automatización.
+
+### 👥 Agentes Especializados
+
+Los agentes son especialistas en diferentes áreas que se invocan automáticamente por los commands o manualmente cuando los necesites:
+
+#### Backend
+- **`hexagonal-backend-architect`** - Diseña arquitectura hexagonal para Python/FastAPI
+- **`backend-test-architect`** - Crea tests unitarios con pytest siguiendo arquitectura hexagonal
+- **`python-test-explorer`** - Diseña casos de prueba exhaustivos para código Python
+
+#### Frontend
+- **`frontend-developer`** - Desarrolla features React siguiendo arquitectura basada en features
+- **`frontend-test-engineer`** - Crea tests con Vitest/Jest y React Testing Library
+- **`shadcn-ui-architect`** - Diseña interfaces usando shadcn/ui components
+- **`ui-ux-analyzer`** - Analiza UI/UX usando Playwright y proporciona feedback de diseño
+
+#### QA y Validación
+- **`qa-criteria-validator`** - Define criterios de aceptación y valida implementaciones con Playwright
+
+### 📚 Estructura de Documentación
+
+Cada user story genera documentación organizada en `.cursor/doc/{JIRA_TICKET}/`:
+
+```
+.cursor/doc/SCRUM-3/
+├── backend.md          # Plan de implementación del backend
+├── frontend.md         # Plan de implementación del frontend
+├── shadcn_ui.md        # Plan de UI con shadcn/ui
+├── test_cases.md       # Casos de prueba exhaustivos
+├── ui_analysis.md      # Análisis UI/UX
+└── summary.md          # Resumen final de la implementación
+```
+
+Esta documentación se referencia en `user_stories.md` para mantener trazabilidad completa.
+
+### 🔧 Hooks y Sessions
+
+#### Hooks (`.cursor/hooks/`)
+Scripts que se ejecutan automáticamente en momentos específicos:
+- **Stop Hook**: Se ejecuta cuando Cursor termina de responder
+- **SubagentStop Hook**: Se ejecuta cuando un subagente termina
+- **Notification Hook**: Se ejecuta cuando Cursor envía notificaciones (ej: pronuncia mensajes)
+
+#### Sessions (`.cursor/sessions/`)
+Archivos de contexto que mantienen el estado de una conversación o tarea:
+- Guardan el contexto de una user story
+- Registran iteraciones y decisiones
+- Permiten retomar conversaciones sin perder información
+- Coordinan múltiples agentes
+
+### 🚀 Flujo de Trabajo Recomendado
+
+1. **Iniciar trabajo en user story:**
+   ```
+   /start-working-on-jira-issue SCRUM-3
+   ```
+
+2. **La IA automáticamente:**
+   - Lee la user story de Jira
+   - Crea estructura de documentación
+   - Planifica la implementación
+   - Coordina agentes especializados
+   - Implementa con TDD
+   - Crea PR y actualiza Jira
+
+3. **Revisar documentación generada:**
+   - Ver `.cursor/doc/SCRUM-3/` para planes detallados
+   - Ver `user_stories.md` para resumen y estado
+
+### 📋 Metodología de Trabajo
+
+El proyecto sigue una metodología estructurada:
+
+- **Arquitectura Hexagonal** para backend (Python/FastAPI)
+- **Arquitectura basada en Features** para frontend (React/Vite)
+- **Test-Driven Development (TDD)** para implementación
+- **Integración continua** con Jira y GitHub
+- **Documentación automática** por cada user story
+
+### 🎓 Cómo Ejecutar Commands
+
+**Desde el chat de Cursor (Recomendado):**
+```
+/start-working-on-jira-issue SCRUM-3
+```
+
+**Ventajas:**
+- Contexto visible en el chat
+- Historial completo de la conversación
+- Fácil seguimiento del progreso
+- Puedes interrumpir o hacer preguntas
+
+Los commands son procesos interactivos que pueden hacerte preguntas, mostrar progreso, y esperar tu confirmación antes de continuar.
+
 ## Servidores MCP instalados
 
 ### Jira MCP (`@mcp-devtools/jira`)
 - Permite leer y gestionar issues de Jira
 - Soporta búsquedas con JQL
 - Acceso a user stories, bugs, tareas, etc.
+- **Usado por:** `start-working-on-jira-issue` command
 
 ### GitHub MCP (`@modelcontextprotocol/server-github`)
 - Permite crear y gestionar pull requests
 - Acceso a repositorios, branches, commits
 - Gestión de issues y pull requests
+- **Usado por:** `start-working-on-jira-issue`, `create-new-gh-issue`, `implement-feedback` commands
 
 ### Figma MCP (Servidor HTTP)
 - Permite acceder a diseños de Figma desde Cursor
@@ -212,13 +379,42 @@ Cursor podrá interactuar directamente con Jira, GitHub y Figma a través del pr
 - Sincronizar diseño y código
 - **Nota:** Requiere tener Figma abierto en modo Dev Mode para el servidor local
 
-## Notas
+### Otros MCPs habilitados
+- **Playwright MCP**: Para testing E2E y validación de criterios de aceptación
+- **shadcn MCP**: Para acceder a componentes y documentación de shadcn/ui
+- **Context7 MCP**: Para resolución de librerías y documentación
+- **Sequential Thinking MCP**: Para razonamiento estructurado
+
+## 📝 Archivos Importantes
+
+### `user_stories.md`
+Contiene todas las user stories sincronizadas desde Jira con:
+- Descripción en formato "Como [rol], quiero [objetivo] para [beneficio]"
+- Criterios de aceptación detallados
+- Estado actual y Pull Request asociado
+- Referencia a documentación en `.cursor/doc/{TICKET}/`
+
+### `.cursor/doc/{JIRA_TICKET}/`
+Carpeta de documentación generada automáticamente para cada user story:
+- `backend.md` - Plan de implementación del backend
+- `frontend.md` - Plan de implementación del frontend
+- `shadcn_ui.md` - Plan de UI
+- `test_cases.md` - Casos de prueba
+- `ui_analysis.md` - Análisis UI/UX
+- `summary.md` - Resumen de implementación
+
+### `.cursor/sessions/context_session_{TICKET}.md`
+Archivos de contexto que mantienen el estado de cada user story durante el desarrollo.
+
+## ⚠️ Notas Importantes
 
 - El archivo `.cursor/mcp.json` contiene credenciales sensibles, asegúrate de no subirlo al repositorio (está en `.gitignore`)
 - La configuración MCP también puede hacerse a nivel global del usuario en `~/.cursor/mcp.json`
 - Los servidores MCP se ejecutan automáticamente cuando Cursor los necesita usando `npx`
 - Asegúrate de tener los permisos necesarios en GitHub para crear pull requests en el repositorio
 - Los MCPs se instalan automáticamente la primera vez que se usan, no necesitas instalarlos manualmente
+- Los commands se ejecutan desde el chat de Cursor usando el formato `/command-name argument`
+- La documentación se genera automáticamente en `.cursor/doc/` cuando trabajas con user stories
 
 ## Solución de problemas
 
@@ -243,4 +439,47 @@ Cursor podrá interactuar directamente con Jira, GitHub y Figma a través del pr
    - Verifica que tengas acceso a `https://mcp.figma.com/mcp`
    - Algunos planes de Figma tienen límites de uso (consulta la documentación)
    - Usuarios con plan Starter tienen límites de hasta 6 llamadas por mes
+
+### Los commands no se ejecutan
+1. Verifica que el command existe en `.cursor/commands/`
+2. Asegúrate de usar el formato correcto: `/command-name argument`
+3. Verifica que estás en el directorio raíz del proyecto
+4. Revisa que el archivo del command tenga el formato correcto
+
+### Los agentes no generan documentación
+1. Verifica que la carpeta `.cursor/doc/{TICKET}/` existe
+2. Los agentes deben ser informados del ticket de Jira por el command principal
+3. Revisa los logs del chat para ver errores específicos
+
+## 🎯 Ejemplo de Flujo Completo
+
+```bash
+# 1. Iniciar trabajo en una user story
+/start-working-on-jira-issue SCRUM-3
+
+# La IA automáticamente:
+# - Lee SCRUM-3 de Jira
+# - Crea .cursor/doc/SCRUM-3/
+# - Planifica la implementación
+# - Coordina agentes (backend, frontend, testing, etc.)
+# - Implementa con TDD
+# - Crea PR en GitHub
+# - Actualiza Jira
+# - Actualiza user_stories.md
+
+# 2. Revisar documentación generada
+cat .cursor/doc/SCRUM-3/summary.md
+
+# 3. Ver estado en user_stories.md
+cat user_stories.md
+```
+
+## 📖 Recursos Adicionales
+
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [Cursor Documentation](https://cursor.sh/docs)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [React Documentation](https://react.dev/)
+- [Vite Documentation](https://vitejs.dev/)
+- [shadcn/ui Documentation](https://ui.shadcn.com/)
 
