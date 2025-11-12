@@ -50,3 +50,4 @@ backend/
 ├── .env.example         # Ejemplo de variables de entorno
 └── README.md           # Este archivo
 ```
+

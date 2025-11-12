@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import CountdownTimer from './components/CountdownTimer'
 
 const API_URL = 'http://localhost:8000/api/leads'
 
@@ -115,6 +116,7 @@ function App() {
             <br />
             <strong>Únete a la lista de espera y forma parte de algo grande.</strong>
           </p>
+          <CountdownTimer targetDate="2024-11-30T14:00:00+01:00" />
         </header>
 
         <div className="content">

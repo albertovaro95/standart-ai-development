@@ -22,6 +22,7 @@ Como desarrollador del equipo, quiero crear la estructura inicial del proyecto c
 **Estado:** Pruebas (Testing)
 **Tecnologías:** Python (Backend), React (Frontend)
 **Pull Request:** https://github.com/albertovaro95/standart-ai-development/pull/1
+**Documentación:** Ver `.cursor/doc/SCRUM-1/` para planes de implementación, casos de prueba y análisis.
 
 ---
 
@@ -46,5 +47,6 @@ Como usuario interesado en la próxima empresa que se va a lanzar, quiero poder 
 **Prioridad:** Alta
 **Estado:** Pruebas (Testing)
 **Tecnologías:** Python (FastAPI), React (Frontend), SQLite (Base de datos)
-**Pull Request:** Pendiente (rama local: feature/SCRUM-2-landing-page)
+**Pull Request:** https://github.com/albertovaro95/standart-ai-development/pull/2
+**Documentación:** Ver `.cursor/doc/SCRUM-2/` para planes de implementación, casos de prueba y análisis.
 
